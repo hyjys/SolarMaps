@@ -1,0 +1,142 @@
+/* =============================================
+   SolarMaps — 다크/라이트 테마
+   Akademiya/gmc 테마 체계를 그대로 이식 (강조색만 태양광 테마로 조정)
+   ============================================= */
+
+:root,
+[data-theme="light"] {
+  --sidebar-width: 240px;
+
+  --primary:        #2563eb;
+  --primary-hover:  #1d4ed8;
+  --primary-light:  #dbeafe;
+
+  --success:        #16a34a;
+  --success-light:  #dcfce7;
+  --danger:         #dc2626;
+  --danger-light:   #fef2f2;
+  --warning:        #f59e0b;
+  --warning-light:  #fffbeb;
+
+  --text:           #1f2937;
+  --text-secondary: #6b7280;
+  --text-muted:     #9ca3af;
+
+  --bg:             #f8fafc;
+  --bg-panel:       #ffffff;
+  --bg-input:       #ffffff;
+  --bg-hover:       #f1f5f9;
+
+  --card-bg:        #ffffff;
+  --border:         #e5e7eb;
+
+  --shadow:         0 1px 3px rgba(37,99,235,0.08), 0 1px 2px rgba(15,23,42,0.04);
+  --shadow-lg:      0 14px 32px -10px rgba(37,99,235,0.22), 0 4px 10px -4px rgba(15,23,42,0.06);
+
+  --radius:         14px;
+  --radius-sm:      10px;
+  --radius-lg:      24px;
+
+  --btn-primary-text: #ffffff;
+
+  color-scheme: light;
+}
+
+/* SolarMaps 기본 테마는 다크 (사용자 요청) */
+:root:not([data-theme="light"]),
+[data-theme="dark"] {
+  --primary:        #60a5fa;
+  --primary-hover:  #3b82f6;
+  --primary-light:  rgba(96, 165, 250, 0.15);
+
+  --success:        #4ade80;
+  --success-light:  rgba(74, 222, 128, 0.15);
+  --danger:         #f87171;
+  --danger-light:   rgba(248, 113, 113, 0.15);
+  --warning:        #fbbf24;
+  --warning-light:  rgba(251, 191, 36, 0.15);
+
+  --text:           #f3f4f6;
+  --text-secondary: #9ca3af;
+  --text-muted:     #6b7280;
+
+  --bg:             #0f172a;
+  --bg-panel:       #1e293b;
+  --bg-input:       #0f172a;
+  --bg-hover:       #1e3a5f;
+
+  --card-bg:        #1e293b;
+  --border:         #334155;
+
+  --shadow:         0 2px 8px rgba(0,0,0,0.35);
+  --shadow-lg:      0 16px 36px -10px rgba(96,165,250,0.22), 0 6px 14px -6px rgba(0,0,0,0.45);
+
+  --btn-primary-text: #0a1929;
+
+  color-scheme: dark;
+}
+
+html[lang="ko"],
+html[lang="ko"] body,
+html[lang="ko"] button,
+html[lang="ko"] input,
+html[lang="ko"] select {
+  font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.2s, color 0.2s;
+}
+
+#root { height: 100%; }
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+input, select {
+  font-family: inherit;
+  font-size: inherit;
+  background-color: var(--bg-input);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+input:focus, select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+html { -webkit-tap-highlight-color: transparent; }
+
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  input, select { font-size: 16px; }
+}

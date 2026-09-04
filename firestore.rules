@@ -1,0 +1,30 @@
+rules_version = '2';
+
+// 규격서(docs/DATA_SPEC.md) §3 컬렉션 4종에 대한 접근 규칙.
+// 공개 대시보드이므로 읽기는 누구나 허용. 쓰기는 Pi(FNB58) 쪽 서비스 계정을
+// 통한 Admin SDK 경로로만 이뤄지므로(클라이언트 SDK 규칙 우회), 클라이언트발
+// 쓰기는 전면 차단한다.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /solar_stations/{stationId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /campus_polygons/{polygonId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /solar_logs/{logId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /school_energy_summary/{docId} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}

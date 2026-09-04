@@ -1,0 +1,25 @@
+# Python
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# 빌드 산출물 (scripts/build.py 로 재생성)
+public/py/*.zip
+public/data/*.bin
+public/data/koppen_decades/
+public/data/koppen_legend.json
+
+# Firebase
+.firebase/
+firebase-debug.log
+serviceAccountKey.json
+.env
+
+# 원본 쾨펜 연별 데이터 (34MB). 저장소 비대화 방지 — 출처는 koppen/README.txt
+koppen/koppen_interannual_1901-2010.tsv
+
+# OS
+Thumbs.db
+.DS_Store

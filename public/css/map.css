@@ -1,0 +1,129 @@
+/* Leaflet 다크 모드 오버라이드 + SolarMaps 전용 레이아웃 */
+
+#map { background: var(--bg); }
+
+/* 다크 테마에서 OSM 타일을 반전+색조조정으로 어둡게 (별도 다크 타일서버 없이) */
+:root:not([data-theme="light"]) .leaflet-tile-pane,
+[data-theme="dark"] .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9) saturate(0.8);
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: var(--card-bg);
+  color: var(--text);
+  box-shadow: var(--shadow-lg);
+}
+
+.leaflet-popup-content { margin: 10px 12px; font-size: 13px; }
+
+.leaflet-container a.leaflet-popup-close-button { color: var(--text-secondary); }
+
+.leaflet-control-zoom a {
+  background: var(--card-bg) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+.leaflet-control-zoom a:hover { background: var(--bg-hover) !important; }
+
+.leaflet-control-attribution {
+  background: rgba(15,23,42,0.7) !important;
+  color: var(--text-secondary) !important;
+}
+.leaflet-control-attribution a { color: var(--text-secondary) !important; }
+
+/* ── 결과 패널: 우측 슬라이드 오버레이 ── */
+#result-panel {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  bottom: 12px;
+  width: 360px;
+  max-width: calc(100vw - 24px);
+  overflow-y: auto;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#result-panel[hidden] { display: none; }
+
+.result-placeholder {
+  padding: 24px 18px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.loading-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 18px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* ── Pyodide 부팅 오버레이 ── */
+#boot-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  z-index: 2000;
+  transition: opacity 0.3s ease;
+}
+#boot-overlay[hidden] { display: none; }
+
+#boot-overlay .spinner {
+  width: 28px;
+  height: 28px;
+  border-width: 3px;
+  color: var(--primary);
+}
+
+#boot-overlay .boot-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* ── 마커 색상 배지 (규격서 §4) ── */
+.marker-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+@media (max-width: 640px) {
+  #result-panel {
+    top: auto;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    width: auto;
+    max-height: 60vh;
+  }
+}
+
+/* ── 대시보드 패널: 좌하단, 데이터 없으면 비어있음 ── */
+.dashboard-panel {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  width: 300px;
+  max-width: calc(100vw - 24px);
+  z-index: 500;
+}
+.dashboard-panel:empty { display: none; }
+
+@media (max-width: 640px) {
+  .dashboard-panel { display: none; }
+}

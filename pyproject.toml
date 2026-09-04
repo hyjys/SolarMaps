@@ -1,0 +1,17 @@
+[project]
+name = "solarmaps"
+version = "0.1.0"
+description = "쾨펜 기후 구분과 태양 기하로 최적 태양광 패널 설치각을 계산하는 엔진"
+requires-python = ">=3.11"
+dependencies = []          # 엔진 무의존성 — Pyodide/CPython 양쪽에서 동일하게 동작
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 120  # 한글 주석이 섞이면 100자 제한이 너무 자주 걸림
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

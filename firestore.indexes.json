@@ -1,0 +1,13 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "solar_logs",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "station_id", "order": "ASCENDING" },
+        { "fieldPath": "timestamp", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

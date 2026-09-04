@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>SolarMaps — 최적 태양광 설치각 지도</title>
+  <meta name="description" content="위치와 쾨펜 기후 구분을 이용해 최적의 태양광 패널 설치 각도와 방향을 알려주는 지도" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <link rel="stylesheet" href="css/theme.css" />
+  <link rel="stylesheet" href="css/app.css" />
+  <link rel="stylesheet" href="css/map.css" />
+
+  <style>
+    .marker-pulse { animation: marker-pulse 1.6s ease-in-out infinite; }
+    @keyframes marker-pulse {
+      0%, 100% { filter: drop-shadow(0 0 0 rgba(16,185,129,0.6)); }
+      50% { filter: drop-shadow(0 0 6px rgba(16,185,129,0.9)); }
+    }
+  </style>
+</head>
+<body>
+  <div id="root" class="app">
+    <div class="top-bar">
+      <div>
+        <h1>☀️ SolarMaps</h1>
+        <div class="subtitle">HAFS 유리프 — 위치·쾨펜 기후 기반 최적 태양광 설치각 계산</div>
+      </div>
+    </div>
+
+    <div class="main-layout">
+      <div id="map"></div>
+      <div id="result-panel" hidden></div>
+      <div id="dashboard-panel" class="dashboard-panel"></div>
+    </div>
+  </div>
+
+  <div id="boot-overlay">
+    <div class="spinner"></div>
+    <div id="boot-text" class="boot-text">지도 불러오는 중…</div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

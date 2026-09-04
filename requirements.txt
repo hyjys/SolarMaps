@@ -1,0 +1,11 @@
+# solarmaps 엔진 자체는 표준 라이브러리만 사용한다(Pyodide 경량 유지 + 휠 호환성 회피).
+# 아래는 개발·빌드·시드 전용 의존성이다.
+
+pytest>=8.0
+ruff>=0.6
+
+# Firestore 시드/집계 스크립트용.
+# Python 3.14에서 grpcio 휠이 없으면 설치가 실패할 수 있다.
+# 그 경우 scripts/seed_firestore.py 가 google-auth + urllib 기반 REST 경로로 자동 대체된다.
+firebase-admin>=6.5 ; python_version < "3.14"
+google-auth>=2.30

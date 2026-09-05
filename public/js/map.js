@@ -8,6 +8,14 @@ export function initMap(elementId) {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     maxZoom: 19,
   }).addTo(map);
+
+  // 폰트/스타일시트 로딩 타이밍에 따라 Leaflet이 컨테이너 크기를 실제보다
+  // 작게(때로는 0으로) 캐싱해 타일이 좁은 영역에만 렌더링되는 문제가 있다.
+  // 레이아웃이 안정된 후(다음 프레임) 한 번, 이후 창 크기 변경 시마다
+  // invalidateSize()로 강제 재계산한다.
+  requestAnimationFrame(() => map.invalidateSize());
+  window.addEventListener("resize", () => map.invalidateSize());
+
   return map;
 }
 

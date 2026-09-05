@@ -47,6 +47,13 @@
   gap: 10px;
 }
 
+/* 컨테이너 높이가 고정된 flex 세로 목록에서는 overflow-y:auto가 있어도
+   자식이 기본 flex-shrink:1 때문에 내용 높이를 무시하고 눌려 잘린다.
+   각 카드가 스크롤로 넘치도록 원래 높이를 유지시킨다. */
+#result-panel > * {
+  flex-shrink: 0;
+}
+
 #result-panel[hidden] { display: none; }
 
 .result-placeholder {

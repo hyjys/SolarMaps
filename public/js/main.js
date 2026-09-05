@@ -21,6 +21,7 @@ async function boot() {
 
   overlay.hidden = true;
   resultPanel.hidden = false;
+  map.invalidateSize(); // 오버레이가 사라지며 레이아웃이 다시 확정된 뒤 지도 크기 재계산
 
   onMapClick(map, async (lat, lon) => {
     renderLoading(resultPanel);

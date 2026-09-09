@@ -1,0 +1,15 @@
+[Unit]
+Description=SolarMaps Pi 노드 (FNB58 -> Firestore)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/solarmaps-pi
+ExecStart=/home/pi/solarmaps-pi/venv/bin/python main.py config.json
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

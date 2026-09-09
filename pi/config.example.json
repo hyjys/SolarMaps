@@ -1,0 +1,34 @@
+{
+  "station": {
+    "station_id": "station_rooftop_main_01",
+    "name": "본관 옥상 실험 1호기",
+    "category": "ROOFTOP",
+    "building_id": "bldg_main",
+    "building_name": "본관",
+    "floor": 4,
+    "location": { "latitude": 37.501234, "longitude": 127.039876, "altitude_m": 18.5 },
+    "hardware": {
+      "panel_model": "Portable-Solar-30W",
+      "rated_power_w": 30.0,
+      "surface_area_m2": 0.18,
+      "tilt_angle_deg": 30,
+      "azimuth_deg": 180
+    }
+  },
+
+  "device": {
+    "mode": "fnb58",
+    "wifi_interface": "wlan0"
+  },
+
+  "firebase": {
+    "service_account_path": "serviceAccountKey.json",
+    "project_id": null
+  },
+
+  "timing": {
+    "sample_interval_s": 1.0,
+    "log_interval_s": 60,
+    "station_update_interval_s": 5
+  }
+}

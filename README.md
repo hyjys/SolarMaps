@@ -8,7 +8,7 @@ HAFS 유리프(유레카 리서치 프로젝트) 산출물. 지도에서 위치�
 - **호스팅/DB**: Firebase Hosting + Firestore
 - **계산 엔진**: 파이썬(표준 라이브러리만 사용), 브라우저에서 **Pyodide**로 실행
 - **기후 데이터**: 쾨펜 기후 분류(Chen & Chen 2013) + NASA POWER 월별 기후평년
-- **실측 연동**: FNB58 → Raspberry Pi Zero W → Firestore (팀원 별도 구축, [docs/DATA_SPEC.md](docs/DATA_SPEC.md))
+- **실측 연동**: FNB58 → Raspberry Pi Zero W → Firestore ([pi/](pi/), 스키마는 [docs/DATA_SPEC.md](docs/DATA_SPEC.md))
 
 물리 모델 상세와 문헌 근거는 [docs/MODEL.md](docs/MODEL.md) 참고.
 
@@ -56,6 +56,7 @@ tests/         pytest
 koppen/        쾨펜 기후 원본 데이터 (Chen & Chen 2013)
 public/        Firebase Hosting 루트 (index.html, css/, js/)
 docs/          모델 문서, 데이터 규격서, Firebase 설정 가이드
+pi/            Raspberry Pi 노드 (FNB58 실측 → Firestore), 설치법은 pi/README.md
 ```
 
 ## 배포

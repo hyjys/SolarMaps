@@ -11,6 +11,7 @@ HAFS 유리프(유레카 리서치 프로젝트) 산출물. 지도에서 위치�
 - **실측 연동**: FNB58 → Raspberry Pi Zero W → Firestore ([pi/](pi/), 스키마는 [docs/DATA_SPEC.md](docs/DATA_SPEC.md))
 
 물리 모델 상세와 문헌 근거는 [docs/MODEL.md](docs/MODEL.md) 참고.
+최초 설치·업데이트·Pi 노드 운영 절차는 [docs/OPERATIONS.md](docs/OPERATIONS.md)에 정리돼 있다.
 
 ## 개발 환경 설정
 
@@ -65,3 +66,5 @@ pi/            Raspberry Pi 노드 (FNB58 실측 → Firestore), 설치법은 pi
 venv/Scripts/python scripts/build.py
 firebase deploy
 ```
+
+최초 배포·이후 업데이트 시 캐시 버스팅 등 세부 절차는 [docs/OPERATIONS.md](docs/OPERATIONS.md) 참고.

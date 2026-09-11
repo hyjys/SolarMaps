@@ -194,6 +194,9 @@ venv/bin/pip install -r requirements.txt
 
 sudo usermod -aG plugdev $USER    # FNB58(/dev/hidraw*) 접근 권한 — 재로그인 필요
 
+# 배포판에 따라 /dev/hidraw*가 plugdev 그룹으로 잡히지 않을 수 있다(`ls -l /dev/hidraw*`로 확인,
+# 소유자가 `root root`뿐이면 아래 udev 규칙 필요). §3.6 참고.
+
 cp config.example.json config.json
 # config.json 편집: station.* (이 노드의 위치/패널 정보), firebase.service_account_path
 ```
@@ -216,7 +219,14 @@ venv/bin/python main.py config.json
 
 ### 3.4 부팅 시 자동 실행 (systemd)
 
+`solarmaps-pi.service`의 `User=`/`WorkingDirectory`/`ExecStart`는 사용자명을 `pi`,
+설치 경로를 `/home/pi/solarmaps-pi`로 가정한다. Raspberry Pi OS Bookworm 이후는 설치 시
+`pi` 사용자가 자동 생성되지 않고 임의의 이름을 쓰므로, 복사하기 전에 `whoami`/`pwd`로
+실제 값과 일치하는지 확인하고 다르면 서비스 파일을 고친다.
+
 ```bash
+whoami   # 실제 사용자명 확인, pi가 아니면 solarmaps-pi.service의 User=/경로를 이 값으로 수정
+
 sudo cp solarmaps-pi.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable --now solarmaps-pi
@@ -246,6 +256,8 @@ journalctl -u solarmaps-pi -f              # 정상 기동 확인
 | :--- | :--- |
 | 지도 마커가 `OFFLINE`(빨강)으로 표시됨 | Pi가 실행 중인지(`journalctl -u solarmaps-pi`), Wi-Fi 연결(`iw dev wlan0 link`), `last_updated`가 5분 넘게 갱신 안 되면 앱이 자동으로 OFFLINE 처리함(§4, DATA_SPEC.md) |
 | `FNB58 HID device not found` | USB 케이블 연결 확인, `lsusb`로 `2e3c:5558` 보이는지 확인, `plugdev` 그룹 추가 후 재로그인했는지 확인 |
+| `Cannot open /dev/hidraw0: permission denied` (plugdev 추가 후에도 발생) | `ls -l /dev/hidraw*`로 소유 그룹 확인 — `root root`뿐이고 `plugdev`가 안 붙어 있으면, 배포판 기본 udev 규칙이 이 장치를 못 잡는 것. `/etc/udev/rules.d/99-fnb58.rules`에 `SUBSYSTEM=="hidraw", ATTRS{idVendor}=="2e3c", ATTRS{idProduct}=="5558", MODE="0660", GROUP="plugdev"` 추가 후 `sudo udevadm control --reload-rules && sudo udevadm trigger`, USB 재연결 |
+| systemd 기동 실패 `status=217/USER` (`Failed to determine user credentials`) | `solarmaps-pi.service`의 `User=`가 실제 존재하지 않는 사용자명. `whoami`로 확인 후 서비스 파일의 `User=`/`WorkingDirectory`/`ExecStart` 경로를 실제 사용자명·설치 경로로 수정, `daemon-reload` 후 재시작 |
 | Firestore 쓰기 실패 로그 | `service_account_path` 경로/파일 존재 확인, 서비스 계정 키가 만료/삭제되지 않았는지 Firebase 콘솔에서 확인, Pi의 시각(`date`)이 맞는지 확인(TLS 핸드셰이크가 시각에 민감) |
 | 값이 이상하게 크거나 0만 나옴 | `vendor/openfnb58/fnb58.py --once`로 단독 확인 — 원본 라이브러리 자체 문제인지, 우리 어댑터(`readers/fnb58.py`) 문제인지 구분 |
 

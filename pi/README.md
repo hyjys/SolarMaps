@@ -70,6 +70,18 @@ cp config.example.json config.json
 sudo usermod -aG plugdev $USER   # /dev/hidraw* 접근 권한, 재로그인 필요
 ```
 
+재로그인 후에도 `Cannot open /dev/hidraw0: permission denied`가 나면 `ls -l /dev/hidraw*`로
+소유 그룹을 확인한다. `root root`뿐이고 `plugdev`가 안 붙어 있으면(배포판 기본 udev 규칙이
+이 장치를 못 잡는 경우) FNB58 전용 udev 규칙을 추가해야 한다:
+
+```bash
+sudo tee /etc/udev/rules.d/99-fnb58.rules <<'EOF'
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="2e3c", ATTRS{idProduct}=="5558", MODE="0660", GROUP="plugdev"
+EOF
+sudo udevadm control --reload-rules
+sudo udevadm trigger   # 또는 USB 케이블 재연결
+```
+
 ### 연결 확인
 
 ```bash

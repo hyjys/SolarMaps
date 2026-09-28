@@ -44,7 +44,7 @@ flowchart TD
 interface SolarStation {
   station_id: string;          // 고유 지점 식별자 (예: "station_rooftop_main_01")
   name: string;                // 지점 이름 (예: "본관 옥상 1호기")
-  category: "ROOFTOP" | "GROUND" | "WINDOW" | "PARKING"; // 설치 유형
+  category: "ROOFTOP" | "GROUND" | "WINDOW" | "PARKING" | "BALCONY"; // 설치 유형
   building_id: string;         // 연계 건물 ID (예: "bldg_main")
   building_name: string;       // 건물명 (예: "본관")
   floor: number;               // 설치 층수 (옥상은 최고층, 지상은 0)

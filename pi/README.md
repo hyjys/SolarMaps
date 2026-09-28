@@ -34,8 +34,25 @@ cp -r solarmaps-src/pi solarmaps-pi
 cd solarmaps-pi
 
 python3 -m venv venv
-venv/bin/pip install -r requirements.txt
+mkdir -p ~/.piptmp
+TMPDIR=~/.piptmp venv/bin/pip install --no-cache-dir -r requirements.txt
+rm -rf ~/.piptmp
 ```
+
+Raspberry Pi OS Trixie 이후는 `/tmp`가 RAM 기반 tmpfs(Zero W에서 약 214MB)라 pip가
+`No space left on device`로 실패할 수 있다. 위처럼 캐시를 끄고(`--no-cache-dir`)
+임시 디렉터리를 SD카드로 돌린다. Zero W(RAM 512MB)는 설치 중에만 임시 swap을
+켜 두면 안전하다:
+
+```bash
+sudo fallocate -l 1G /var/tmp/install.swap && sudo chmod 600 /var/tmp/install.swap
+sudo mkswap /var/tmp/install.swap && sudo swapon /var/tmp/install.swap
+# ... 설치 ...
+sudo swapoff /var/tmp/install.swap && sudo rm /var/tmp/install.swap
+```
+
+Zero W(armv6) + Python 3.13에서도 piwheels(`/etc/pip.conf` 기본 설정)에 휠이 있어
+`firebase-admin`(grpcio 포함)이 소스 빌드 없이 설치·동작하는 것을 확인했다.
 
 ## 설정
 
@@ -79,15 +96,17 @@ sudo tee /etc/udev/rules.d/99-fnb58.rules <<'EOF'
 SUBSYSTEM=="hidraw", ATTRS{idVendor}=="2e3c", ATTRS{idProduct}=="5558", MODE="0660", GROUP="plugdev"
 EOF
 sudo udevadm control --reload-rules
-sudo udevadm trigger   # 또는 USB 케이블 재연결
+sudo udevadm trigger --action=add --subsystem-match=hidraw   # 또는 USB 케이블 재연결
 ```
+
+`--action=add`를 빼면(기본값 `change`) 이미 연결된 장치의 권한이 바뀌지 않는다.
 
 ### 연결 확인
 
 ```bash
 cd pi
 venv/bin/python vendor/openfnb58/fnb58.py --once      # 단발 측정값 확인
-venv/bin/python readers/fnb58.py                      # 우리 어댑터로 확인
+venv/bin/python -m readers.fnb58                      # 우리 어댑터로 확인 (상대 import라 -m 필수)
 ```
 
 값이 정상적으로 나오면 `config.json`의 `device.mode`를 `"fnb58"`로 설정한다.

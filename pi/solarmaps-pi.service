@@ -7,6 +7,8 @@ Wants=network-online.target
 Type=simple
 User=pi
 WorkingDirectory=/home/pi/solarmaps-pi
+# print()가 버퍼링돼 journalctl에 로그가 안 보이는 문제 방지
+Environment=PYTHONUNBUFFERED=1
 ExecStart=/home/pi/solarmaps-pi/venv/bin/python main.py config.json
 Restart=on-failure
 RestartSec=5

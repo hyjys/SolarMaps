@@ -190,7 +190,10 @@ ssh pi@<Pi IP>
 cd /home/pi/solarmaps-pi
 
 python3 -m venv venv
-venv/bin/pip install -r requirements.txt
+# Trixie 이후 /tmp는 RAM tmpfs(Zero W 약 214MB) — 캐시 끄고 임시 디렉터리를 SD로 (pi/README.md 참고)
+mkdir -p ~/.piptmp
+TMPDIR=~/.piptmp venv/bin/pip install --no-cache-dir -r requirements.txt
+rm -rf ~/.piptmp
 
 sudo usermod -aG plugdev $USER    # FNB58(/dev/hidraw*) 접근 권한 — 재로그인 필요
 
@@ -212,6 +215,7 @@ venv/bin/python main.py config.json
 
 # 2) FNB58을 USB로 연결한 뒤 단발 측정 확인
 venv/bin/python vendor/openfnb58/fnb58.py --once
+venv/bin/python -m readers.fnb58            # 우리 어댑터 경유 확인 (상대 import라 -m 필수)
 
 # 3) 값이 정상이면 config.json의 device.mode를 "fnb58"로 바꾸고 다시 실행
 venv/bin/python main.py config.json
@@ -235,6 +239,18 @@ journalctl -u solarmaps-pi -f      # 로그 확인, Ctrl+C로 종료
 
 ### 3.5 업데이트 (Pi 쪽 코드를 고친 뒤)
 
+설치를 마친 노드는 SD카드 수명·갑작스러운 전원 차단 대비로 오버레이 파일시스템(루트를
+읽기 전용으로 두고 변경분은 RAM에만 기록)을 켜 둔다. **오버레이가 켜진 동안의 변경
+(코드·`config.json`·`passwd`·`nmcli` Wi-Fi 추가 등)은 재부팅하면 전부 사라진다.**
+업데이트 전에 먼저 끄고, 끝나면 다시 켠다:
+
+```bash
+sudo raspi-config nonint get_overlay_now           # 출력 0 = 오버레이 동작 중, 1 = 꺼짐
+sudo raspi-config nonint do_overlayfs 1 && sudo reboot   # 끄기 (재부팅 후 쓰기 가능)
+# ... 아래 업데이트 작업 ...
+sudo raspi-config nonint do_overlayfs 0 && sudo reboot   # 다시 켜기
+```
+
 ```bash
 ssh pi@<Pi IP>
 cd /home/pi/solarmaps-pi
@@ -256,7 +272,10 @@ journalctl -u solarmaps-pi -f              # 정상 기동 확인
 | :--- | :--- |
 | 지도 마커가 `OFFLINE`(빨강)으로 표시됨 | Pi가 실행 중인지(`journalctl -u solarmaps-pi`), Wi-Fi 연결(`iw dev wlan0 link`), `last_updated`가 5분 넘게 갱신 안 되면 앱이 자동으로 OFFLINE 처리함(§4, DATA_SPEC.md) |
 | `FNB58 HID device not found` | USB 케이블 연결 확인, `lsusb`로 `2e3c:5558` 보이는지 확인, `plugdev` 그룹 추가 후 재로그인했는지 확인 |
-| `Cannot open /dev/hidraw0: permission denied` (plugdev 추가 후에도 발생) | `ls -l /dev/hidraw*`로 소유 그룹 확인 — `root root`뿐이고 `plugdev`가 안 붙어 있으면, 배포판 기본 udev 규칙이 이 장치를 못 잡는 것. `/etc/udev/rules.d/99-fnb58.rules`에 `SUBSYSTEM=="hidraw", ATTRS{idVendor}=="2e3c", ATTRS{idProduct}=="5558", MODE="0660", GROUP="plugdev"` 추가 후 `sudo udevadm control --reload-rules && sudo udevadm trigger`, USB 재연결 |
+| `Cannot open /dev/hidraw0: permission denied` (plugdev 추가 후에도 발생) | `ls -l /dev/hidraw*`로 소유 그룹 확인 — `root root`뿐이고 `plugdev`가 안 붙어 있으면, 배포판 기본 udev 규칙이 이 장치를 못 잡는 것. `/etc/udev/rules.d/99-fnb58.rules`에 `SUBSYSTEM=="hidraw", ATTRS{idVendor}=="2e3c", ATTRS{idProduct}=="5558", MODE="0660", GROUP="plugdev"` 추가 후 `sudo udevadm control --reload-rules && sudo udevadm trigger --action=add --subsystem-match=hidraw`(`--action=add` 없이는 이미 연결된 장치에 적용 안 됨) 또는 USB 재연결 |
+| 서비스는 `active`인데 `journalctl`에 앱 로그가 안 나옴 | 파이썬 stdout 버퍼링. 서비스 파일에 `Environment=PYTHONUNBUFFERED=1`이 있는지 확인(저장소 `solarmaps-pi.service`에는 포함됨) |
+| pip 설치 중 `No space left on device` | `/tmp`가 RAM tmpfs라 공간 부족. `TMPDIR=~/.piptmp`, `--no-cache-dir`로 재시도, Zero W는 임시 swap 추가(pi/README.md) |
+| `ImportError: attempted relative import` (`readers/fnb58.py` 직접 실행 시) | `venv/bin/python -m readers.fnb58`처럼 모듈로 실행 |
 | systemd 기동 실패 `status=217/USER` (`Failed to determine user credentials`) | `solarmaps-pi.service`의 `User=`가 실제 존재하지 않는 사용자명. `whoami`로 확인 후 서비스 파일의 `User=`/`WorkingDirectory`/`ExecStart` 경로를 실제 사용자명·설치 경로로 수정, `daemon-reload` 후 재시작 |
 | Firestore 쓰기 실패 로그 | `service_account_path` 경로/파일 존재 확인, 서비스 계정 키가 만료/삭제되지 않았는지 Firebase 콘솔에서 확인, Pi의 시각(`date`)이 맞는지 확인(TLS 핸드셰이크가 시각에 민감) |
 | 값이 이상하게 크거나 0만 나옴 | `vendor/openfnb58/fnb58.py --once`로 단독 확인 — 원본 라이브러리 자체 문제인지, 우리 어댑터(`readers/fnb58.py`) 문제인지 구분 |
@@ -272,6 +291,7 @@ journalctl -u solarmaps-pi -f              # 정상 기동 확인
 (데이터/엔진 고쳤으면 `build.py` 재실행) → `firebase deploy`
 
 **Pi 최초 설치**: `pi/` 복사 → venv → `plugdev` 그룹 → `config.json` 작성 →
-시뮬레이터로 파이프라인 확인 → FNB58 단독 확인 → `fnb58` 모드 전환 → systemd 등록
+시뮬레이터로 파이프라인 확인 → FNB58 단독 확인 → `fnb58` 모드 전환 → systemd 등록 →
+비밀번호 변경 등 마무리 → 오버레이 파일시스템 켜기
 
-**Pi 업데이트**: pull/재복사(설정 파일 보존) → 의존성 재설치 → `systemctl restart` → 로그 확인
+**Pi 업데이트**: 오버레이 끄기 → pull/재복사(설정 파일 보존) → 의존성 재설치 → `systemctl restart` → 로그 확인 → 오버레이 다시 켜기

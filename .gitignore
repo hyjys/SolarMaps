@@ -23,3 +23,6 @@ koppen/koppen_interannual_1901-2010.tsv
 # OS
 Thumbs.db
 .DS_Store
+
+# Blender 자동 백업
+*.blend1

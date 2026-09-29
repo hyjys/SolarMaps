@@ -1,4 +1,4 @@
-"""SolarMaps 태양광 패널(접이식 482 x 185) 가변 각도 거치대 생성 스크립트.
+r"""SolarMaps 태양광 패널(접이식 482 x 185) 가변 각도 거치대 생성 스크립트.
 
 Blender 5.x 에서 실행한다 (MCP 또는 Text Editor 에서 Run Script). 새 씬 "SolarMaps_Stand" 에 만든다.
 1 BU = 1 mm.

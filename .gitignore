@@ -27,5 +27,6 @@ Thumbs.db
 # Blender 자동 백업
 *.blend1
 
-# 조립 가이드 중간 렌더 (modeling/stand_guide/render_views.py 로 재생성)
+# 조립 가이드 중간 렌더 (modeling/*_guide/render_views.py 로 재생성)
 modeling/stand_guide/_img/
+modeling/case_guide/_img/

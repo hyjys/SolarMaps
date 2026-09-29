@@ -104,8 +104,7 @@ CUR = []
 
 def callout(key, loc):
     """설명선이 가리킬 점 — 화면 정규화 좌표 (0~1, 좌하단 원점) 로 기록."""
-    u, v, _ = world_to_camera_view(SC, cam, Vector(loc))
-    CUR.append((key, round(u, 4), round(v, 4)))
+    CUR.append((key, Vector(loc)))       # 투영은 render() 에서 해상도(화면비)를 정한 뒤에
 
 
 def show_only(objs):
@@ -115,10 +114,14 @@ def show_only(objs):
 
 
 def render(name, res=(1800, 1200)):
-    ANCHORS[name] = {"res": list(res), "points": list(CUR)}
-    CUR.clear()
     SC.render.resolution_x, SC.render.resolution_y = res
     SC.render.resolution_percentage = 100
+    pts = []
+    for key, co in CUR:
+        u, v, _ = world_to_camera_view(SC, cam, co)
+        pts.append((key, round(u, 4), round(v, 4)))
+    ANCHORS[name] = {"res": list(res), "points": pts}
+    CUR.clear()
     SC.render.filepath = os.path.join(IMG_DIR, name + ".png")
     bpy.ops.render.render(write_still=True)
 

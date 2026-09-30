@@ -30,3 +30,6 @@ Thumbs.db
 # 조립 가이드 중간 렌더 (modeling/*_guide/render_views.py 로 재생성)
 modeling/stand_guide/_img/
 modeling/case_guide/_img/
+
+# 슬라이싱 결과 (.gcode.3mf, 프린터·필라멘트 색에 따라 매번 다시 뽑음)
+modeling/gcode/

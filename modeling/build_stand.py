@@ -132,6 +132,10 @@ def get_collection(name):
         coll = bpy.data.collections.new(name)
     if coll.name not in SCENE.collection.children:
         SCENE.collection.children.link(coll)
+    # 저장된 .blend 에서 숨겨진 채로 다시 열리면 선택·내보내기가 안 되므로 항상 보이게 시작
+    coll.hide_viewport = False
+    SCENE.view_layers[0].layer_collection.children[coll.name].hide_viewport = False
+    SCENE.view_layers[0].layer_collection.children[coll.name].exclude = False
     for ob in list(coll.objects):
         bpy.data.objects.remove(ob, do_unlink=True)
     return coll
@@ -512,6 +516,9 @@ def export_stl(ob, path):
     bpy.context.view_layer.objects.active = ob
     bpy.ops.wm.stl_export(filepath=path, export_selected_objects=True,
                           apply_modifiers=True, global_scale=1.0, use_scene_unit=False)
+    # 선택이 안 된 채 내보내면 삼각형 0개짜리 84바이트 STL 이 조용히 생긴다
+    if os.path.getsize(path) <= 84:
+        raise RuntimeError(f"빈 STL 이 내보내졌습니다: {path} ({ob.name} 이 선택되지 않음)")
 
 
 os.makedirs(PARTS_DIR, exist_ok=True)

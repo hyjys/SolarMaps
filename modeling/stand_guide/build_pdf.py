@@ -59,7 +59,7 @@ c.setFont("KRB", 24)
 c.drawString(MARGIN, PH - 24 * mm, "태양광 패널 거치대 조립 가이드")
 c.setFont("KR", 11.5)
 c.drawString(MARGIN, PH - 33 * mm, "HAFS EURIF · SolarMaps 노드용 접이식 패널 (482 × 185 mm)")
-c.drawString(MARGIN, PH - 40 * mm, "각도 20° ~ 70° (10° 간격) · 출력 2판 · 볼트 없이 프린트 핀으로 조립")
+c.drawString(MARGIN, PH - 40 * mm, "각도 " + "·".join(str(a) for a in C["ANGLES"]) + "° 6단 · 출력 2판 · 볼트 없이 프린트 핀으로 조립")
 
 draw_image(c, "01_overview_front", MARGIN, PH - 150 * mm, w=TW, h=96 * mm, callouts=(
     ("frame", "프레임 (L/R 반쪽)", -40, 42),
@@ -188,7 +188,7 @@ page += 1
 header(c, "4", "각도 맞추기", page)
 y = PH - 30 * mm
 w3 = (TW - 8 * mm) / 3
-for i, deg in enumerate((20, 40, 70)):
+for i, deg in enumerate((min(C["ANGLES"]), C["SHOW_ANGLE"], max(C["ANGLES"]))):
     x = MARGIN + i * (w3 + 4 * mm)
     draw_image(c, f"07_angle_{deg}", x, y - 62 * mm, w=w3, h=58 * mm)
     c.setFont("KRB", 13)
@@ -206,12 +206,12 @@ c.setFont("KRB", 11)
 c.setFillColor(ACCENT)
 c.drawString(MARGIN, y - 4, "노치 위치 (힌지 축에서 발끝 중심까지)")
 y -= 10
-rows = [[f"{deg}°", f"{foot_d(deg):.0f} mm", tip] for deg, tip in (
-    (70, "겨울철 해가 낮을 때"), (60, ""), (50, ""), (40, ""),
-    (30, "연평균 발전량 권장 (서울 위도 37.5°)"), (20, "여름철"))]
+TIPS = {70: "겨울철 해가 낮을 때", 38: "SolarMaps 이론 최적 경사 (연평균) — 기본 설정", 20: "여름철"}
+rows = [[f"{deg}°", f"{foot_d(deg):.0f} mm", TIPS.get(deg, "")] for deg in sorted(C["ANGLES"], reverse=True)]
 y = table(c, MARGIN, y, [("각도", 25 * mm), ("거리", 30 * mm), ("참고", TW - 55 * mm)], rows, size=9.5)
 y -= 8
-paragraph(c, "※ 우리나라 고정 설치 최적 경사는 보통 30~35° 입니다. 계절마다 바꿀 수 있다면 여름 20°, 봄·가을 40°, 겨울 60~70° 가 유리합니다. "
+paragraph(c, "※ SolarMaps 이론 계산으로는 이 위도에서 연평균 최적 경사가 38°라서 기본 각도로 38° 노치를 두었습니다. "
+             "계절마다 바꿀 수 있다면 여름에는 낮게(20~30°), 겨울에는 높게(60~70°) 두면 유리합니다. "
              "패널 정면이 남쪽을 향하게 두세요.", MARGIN, y, TW, size=9, color=GREY)
 c.showPage()
 page += 1

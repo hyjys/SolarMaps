@@ -152,7 +152,8 @@ def mat_cols(cx, cy, cz, t):
 os.makedirs(IMG_DIR, exist_ok=True)
 ASSEMBLED = [ob for ob in bpy.data.collections["SolarMaps_Stand"].objects if not ob.hide_viewport]
 PANEL = O["REF_Panel_482x185"]
-MF = m_frame(30)
+SHOW = C["SHOW_ANGLE"]
+MF = m_frame(SHOW)
 
 # 1. 완성 모습 (앞 / 뒤 아래쪽에서 — 뒷면 口자 개방부)
 clear_guide()
@@ -160,7 +161,7 @@ show_only(ASSEMBLED + [PANEL])
 set_cam((720, -520, 420), (246, 95, 45), lens=42)
 callout("frame", MF @ Vector((HALF - 60, FY, RAIL_T + 3)))
 callout("base", (FX + 4, 150, 8))
-callout("leg", m_leg(30, FX + GAP) @ Vector((55, 0, LEG_T)))
+callout("leg", m_leg(SHOW, FX + GAP) @ Vector((55, 0, LEG_T)))
 callout("clip", MF @ Vector((C["CLIP_X"][3], -1, 30)))
 callout("wedge", MF @ Vector((C["CLIP_X"][2] + 20, RIM_W + PANEL_CLR + 4, RAIL_T + PANEL_T + 5)))
 render("01_overview_front")
@@ -216,7 +217,7 @@ clear_guide()
 inst(O["Stand_FrameHalf_L"], MF)
 inst(O["Stand_Base_L"], Matrix())
 inst(O["Stand_Pin_Hinge"], T((-GAP - EAR_T, 0, HZ)))
-leg_m = T((-80, 0, 0)) @ m_leg(30, -GAP - LEG_T)
+leg_m = T((-80, 0, 0)) @ m_leg(SHOW, -GAP - LEG_T)
 inst(O["Stand_Leg"], leg_m)
 pin_m = T((-150, 0, 0)) @ MF @ T((-GAP - LEG_T, KN_Y + LEG_A, AX_Z))
 inst(O["Stand_Pin_Leg"], pin_m)
@@ -225,11 +226,11 @@ set_cam((-330, -300, 250), (-60, 90, 45), lens=45)
 callout("lpin", pin_m @ Vector((8, 0, 3)))
 callout("leg", leg_m @ Vector((55, 0, LEG_T)))
 callout("lhole", MF @ Vector((0, KN_Y + LEG_A, AX_Z)))
-callout("notch", (-GAP - LEG_T / 2, foot_d(30), HZ))
+callout("notch", (-GAP - LEG_T / 2, foot_d(SHOW), HZ))
 render("06_leg")
 
-# 6. 각도 — 옆(-X)에서 본 20° / 40° / 70°
-for deg in (20, 40, 70):
+# 6. 각도 — 옆(-X)에서 본 최저 / 표시(최적) / 최고 각도
+for deg in (min(C["ANGLES"]), SHOW, max(C["ANGLES"])):
     clear_guide()
     mf = m_frame(deg)
     for ob, m in ((O["Stand_FrameHalf_L"], mf), (O["Stand_Base_L"], Matrix()),

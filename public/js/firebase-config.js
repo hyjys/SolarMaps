@@ -5,12 +5,12 @@
 // 그대로 동작한다 — 모니터링 기능만 비활성화된다.
 
 export const firebaseConfig = {
-  apiKey: "",
-  authDomain: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: "",
+  apiKey: "AIzaSyCEgPrG6ZSSRe-5LpeCiK7IssM0jRq1Cdg",
+  authDomain: "solarmaps-hafs.firebaseapp.com",
+  projectId: "solarmaps-hafs",
+  storageBucket: "solarmaps-hafs.firebasestorage.app",
+  messagingSenderId: "908237649304",
+  appId: "1:908237649304:web:373862709939ee0da6a7ed",
 };
 
 export function isFirebaseConfigured() {

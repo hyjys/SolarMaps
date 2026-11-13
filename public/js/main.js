@@ -1,9 +1,10 @@
 import { analyzeAtPoint, getConstants, getPyodide } from "./py-bridge.js";
-import { subscribe, subscribeDoc } from "./firestore.js";
+import { subscribe, subscribeDoc } from "./firestore.js?v=3";
 import { focusOnStations, initMap, onMapClick, renderCampusPolygons, renderStationMarkers } from "./map.js";
 import { renderDashboard } from "./ui/dashboard.js";
 import { renderError, renderLoading, renderPlaceholder, renderResult } from "./ui/result-panel.js";
 import { SolarSimulator } from "./ui/simulator.js";
+import { initSolarLogExport } from "./ui/solar-log-export.js";
 
 // HAFS(용인한국외국어대학교부설고등학교) 기본 실측 노드(기계) 데이터
 // Firebase 설정 전이거나 오프라인 상태에서도 설치된 기계의 위치가 즉시 지도에 표시되도록 보장한다.
@@ -114,6 +115,11 @@ async function boot() {
   const simulatorOverlay = document.getElementById("simulator-overlay");
   const tabMapBtn = document.getElementById("nav-tab-map");
   const tabSimBtn = document.getElementById("nav-tab-sim");
+
+  initSolarLogExport(
+    document.getElementById("solar-logs-download"),
+    document.getElementById("solar-logs-download-status"),
+  );
 
   // 시뮬레이터 인스턴스 생성
   const simulator = new SolarSimulator(simulatorOverlay);

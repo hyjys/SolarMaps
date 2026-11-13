@@ -1,8 +1,6 @@
-// Firestore 실시간 구독 공용 래퍼. 규격서(docs/DATA_SPEC.md)의 컬렉션 4종
-// (solar_stations, campus_polygons, solar_logs, school_energy_summary) 모두
-// 이 subscribe() 하나로 접근한다 — 컬렉션별 리스너 코드를 중복 작성하지 않는다.
+// Firestore 실시간 구독과 서버 조회 공용 래퍼.
 
-import { firebaseConfig, isFirebaseConfigured } from "./firebase-config.js";
+import { firebaseConfig, isFirebaseConfigured } from "./firebase-config.js?v=3";
 
 let appPromise = null;
 
@@ -12,9 +10,23 @@ async function getApp() {
     appPromise = (async () => {
       const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js");
       return initializeApp(firebaseConfig);
-    })();
+    })().catch((err) => {
+      appPromise = null;
+      throw err;
+    });
   }
   return appPromise;
+}
+
+export async function fetchCollectionFromServer(collectionPath) {
+  const app = await getApp();
+  if (!app) throw new Error("Firebase 미설정");
+
+  const { getFirestore, collection, getDocsFromServer } = await import(
+    "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js"
+  );
+  const snapshot = await getDocsFromServer(collection(getFirestore(app), collectionPath));
+  return snapshot.docs.map((doc) => ({ id: doc.id, data: doc.data() }));
 }
 
 // collectionPath: "solar_stations" 등. handler(docs: Array<{id, data}>) 콜백.

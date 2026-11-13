@@ -63,6 +63,14 @@
 
 #dashboard-panel:empty { display: none; }
 
+.solar-logs-download-status {
+  margin-top: 8px;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.solar-logs-download-status:empty { margin-top: 0; }
+
 .result-placeholder {
   padding: 24px 18px;
   text-align: center;

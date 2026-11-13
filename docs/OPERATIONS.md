@@ -133,11 +133,9 @@ UI만 건드렸다면 데스크탑/모바일 두 폭 모두 확인 (`#side-panel
 <link rel="stylesheet" href="css/map.css?v=3" />
 ```
 
-`index.html` 자체는 `firebase.json`에서 캐시 규칙이 없어 매번 새로 받으므로,
-저 숫자만 올리면 CSS/JS도 즉시 갱신된다. JS 모듈(`main.js` 등)은 코드에서
-버전 쿼리를 안 쓰고 있으니, JS 로직을 바꿨는데 반영이 안 되는 것 같으면
-같은 방식으로 `<script type="module" src="js/main.js?v=..."></script>`에도
-버전을 붙이는 걸 검토한다.
+홈페이지(`/`, `/index.html`)는 `Cache-Control: no-cache`로 브라우저가 요청할 때마다
+최신 HTML인지 확인한다. CSS나 JS를 수정하면 HTML과 모듈의 `import`에서 해당 파일의
+버전 쿼리(`?v=3` 등)도 올려 배포 직후 새 파일을 불러오도록 한다.
 
 ### 2.4 쾨펜/계산 엔진을 고쳤다면 재빌드
 
